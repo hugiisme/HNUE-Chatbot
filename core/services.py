@@ -61,8 +61,7 @@ try:
     mongo_client = pymongo.MongoClient(
                     MONGO_URI,
                     serverSelectionTimeoutMS=5000,
-                    tls=True  
-                )
+                    tls=True)
     mongo_client.server_info()
     mongo_db = mongo_client[MONGO_DB_NAME]
     chat_collection = mongo_db[MONGO_COLLECTION_NAME]
