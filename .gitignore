@@ -19,7 +19,7 @@ Pipfile.lock
 
 # ChromaDB vector store (chỉ ignore nếu bạn muốn rebuild mỗi lần)
 # Nếu bạn ĐẨY DB LÊN GIT để dùng lại, thì COMMENT dòng này
-# vectorstore_db/
+vectorstore_db/
 
 # MacOS and Windows
 .DS_Store
