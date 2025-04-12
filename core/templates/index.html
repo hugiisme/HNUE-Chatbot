@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Gemini Chatbot</title>
+        <link rel="stylesheet" href="/static/css/style.css" />
+        <link rel="stylesheet" href="/static/css/nav.css" />
+        <link rel="stylesheet" href="/static/css/notification.css" />
+        <link rel="stylesheet" href="/static/css/confirmation.css" />
+        <link
+            href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+            rel="stylesheet"
+        />
+        {{ chat_history|json_script:"chat-history-data" }}
+    </head>
+    <body>
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-title">Gemini Chat</span>
+                <button id="toggle-navigation">
+                    <i
+                        id="toggle-navigation-icon"
+                        class="bx bxs-chevrons-left"
+                    ></i>
+                </button>
+            </div>
+            <ul class="navigation">
+                <li>
+                    <a
+                        href="{% url 'chat_index' %}"
+                        id="new-chat-btn"
+                        title="Tạo cuộc trò chuyện mới"
+                    >
+                        <i class="bx bx-plus-circle"></i>
+                        <span>Chat Mới</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"
+                        ><i class="bx bx-cog"></i><span>Cài đặt</span></a
+                    >
+                </li>
+                <li>
+                    <a href="#"
+                        ><i class="bx bx-user"></i><span>Tài khoản</span></a
+                    >
+                </li>
+            </ul>
+            <div class="chatlist">
+                <button id="dropdown-btn">
+                    <span
+                        ><i class="bx bx-history"></i><a>Lịch sử Chat</a></span
+                    >
+                    <i id="dropdown-icon" class="bx bxs-chevron-down"></i>
+                </button>
+                <ul class="submenu">
+                    {% if chat_list %} {% for chat in chat_list %}
+                    <li
+                        class="submenu-content {% if chat.chat_id == viewed_chat_id %}active{% endif %}"
+                        data-chat-id="{{ chat.chat_id }}"
+                    >
+                        <div class="chat-list-item">
+                            <a
+                                href="{% url 'chat_index' %}?chat_id={{ chat.chat_id }}"
+                                class="chat-link"
+                                title="{{ chat.title|escape }}"
+                            >
+                                <span class="chat-title-text"
+                                    >{{ chat.title|escape }}</span
+                                >
+                            </a>
+                            <button class="chat-settings-btn" title="Tùy chọn">
+                                <i class="bx bx-dots-horizontal-rounded"></i>
+                            </button>
+                            <div
+                                class="edit-title-container"
+                                style="display: none"
+                            >
+                                <input
+                                    type="text"
+                                    class="edit-title-input"
+                                    value="{{ chat.title|escape }}"
+                                />
+                                <div class="edit-title-actions">
+                                    <button class="save-title-btn" title="Lưu">
+                                        <i class="bx bx-check"></i>
+                                    </button>
+                                    <button
+                                        class="cancel-title-btn"
+                                        title="Hủy"
+                                    >
+                                        <i class="bx bx-x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-options-menu" style="display: none">
+                            <button class="rename-chat-btn">
+                                <i class="bx bx-pencil"></i> Đổi tên
+                            </button>
+                            <button class="delete-chat-btn">
+                                <i class="bx bx-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </li>
+                    {% endfor %} {% else %}
+                    <li
+                        class="no-chats-placeholder"
+                        style="
+                            padding: 10px;
+                            color: #888;
+                            font-style: italic;
+                            text-align: center;
+                        "
+                    >
+                        <span>Chưa có cuộc trò chuyện nào.</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <form action="{% url 'logout' %}" id="logout-form" method="post">
+                {% csrf_token %}
+                <button type="submit" id="logout-btn">
+                    <i class="bx bx-log-out"></i>
+                    <span>Đăng xuất</span>
+                </button>
+            </form>
+        </nav>
+        <main>
+            <div class="chat-area-wrapper">
+                <h1 class="main-title">Gemini Chat</h1>
+                <div class="chatbox"></div>
+                <div class="user-input">
+                    <textarea
+                        id="prompt"
+                        rows="1"
+                        placeholder="Nhập tin nhắn..."
+                    ></textarea>
+                    <button type="submit" id="submit-btn" title="Gửi">
+                        <i class="bx bxs-send"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <div id="notification-container"></div>
+
+        <div id="confirmation-modal" class="modal-overlay">
+            <div class="modal-content">
+                <p id="confirmation-message"></p>
+                <div class="modal-buttons">
+                    <button id="confirm-yes-btn" class="confirm-btn">
+                        Yes
+                    </button>
+                    <button id="confirm-no-btn" class="cancel-btn">No</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="/static/js/nav.js"></script>
+        <script src="/static/js/notification.js"></script>
+        <script src="/static/js/confirmation.js"></script>
+        <script src="/static/js/script.js"></script>
+    </body>
+</html>

@@ -1,0 +1,199 @@
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@400;600&display=swap");
+
+:root {
+    --main-color: #212121;
+    --sidebar-color: #171717; /* Giả sử bạn có CSS cho sidebar ở nav.css */
+    --text-color: #ffffff;
+    --line-color: #595959;
+    --negative-color: #ff6347;
+    --negative-color-hover: #ff0000;
+    --positive-color: #28a745;
+    --positive-color-hover: #218838;
+    --user-message: #474747;
+    --bot-message: #36883f;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: "Lexend Deca", sans-serif;
+}
+
+body {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-columns: auto 1fr; /* Giữ nguyên layout grid cho body */
+    background-color: var(--main-color); /* Có thể đặt BG ở body */
+    color: var(--text-color);
+    overflow: hidden; /* Ngăn body scroll */
+}
+
+/* Sidebar styling (từ nav.css hoặc thêm vào đây nếu cần) */
+nav#sidebar {
+    background-color: var(--sidebar-color);
+    overflow-y: auto; /* Cho phép sidebar scroll nếu nội dung dài */
+    height: 100dvh; /* Đảm bảo sidebar chiếm đủ chiều cao */
+}
+
+main {
+    background-color: var(--main-color); /* Có thể bỏ nếu đã đặt ở body */
+    color: var(--text-color);
+    display: flex; /* Sử dụng flexbox */
+    flex-direction: column; /* Hướng dọc */
+    height: 100dvh; /* Quan trọng: main chiếm toàn bộ chiều cao viewport */
+    overflow: hidden; /* Quan trọng: Ngăn main scroll, để chatbox scroll */
+}
+
+/* Thêm một wrapper nếu muốn giữ chatbox và input ở giữa và có padding */
+.chat-area-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa chatbox và input */
+    flex-grow: 1; /* Chiếm không gian còn lại trong main */
+    overflow: hidden; /* Ngăn wrapper scroll */
+    padding: 40px 20px 0; /* Padding top/sides, không cần bottom vì user-input có padding */
+    width: 100%; /* Chiếm toàn bộ chiều rộng main */
+}
+
+.chatbox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto; /* <<< QUAN TRỌNG: Cho phép chatbox scroll */
+    /* padding: 10px; */ /* Bỏ padding này, dùng padding của wrapper */
+    /* border-radius: 10px; */ /* Có thể giữ */
+    width: 100%; /* Chiếm chiều rộng của wrapper */
+    max-width: 700px; /* Giới hạn chiều rộng tối đa */
+    flex-grow: 1; /* <<< QUAN TRỌNG: Chiếm không gian dọc còn lại */
+    padding: 20px; /* Padding bên trong chatbox */
+    /* margin-bottom: 90px; <<< XÓA DÒNG NÀY */
+    scrollbar-width: thin; /* Tùy chọn: scrollbar mỏng hơn */
+    scrollbar-color: #595959 var(--main-color); /* Tùy chọn: màu scrollbar */
+}
+
+/* Tùy chỉnh scrollbar cho Webkit (Chrome, Safari, Edge) */
+.chatbox::-webkit-scrollbar {
+    width: 6px;
+}
+.chatbox::-webkit-scrollbar-track {
+    background: var(--main-color);
+}
+.chatbox::-webkit-scrollbar-thumb {
+    background-color: var(--line-color);
+    border-radius: 3px;
+}
+
+.message {
+    padding: 10px 15px;
+    max-width: 70%; /* Tăng nhẹ max-width */
+    border-radius: 15px;
+    font-size: 14px;
+    word-wrap: break-word;
+    line-height: 1.4; /* Thêm line-height */
+}
+
+.user-message {
+    background-color: var(--user-message);
+    color: var(--text-color);
+    align-self: flex-end;
+    border-bottom-right-radius: 5px; /* Điều chỉnh nhẹ */
+}
+
+.bot-message {
+    background-color: var(--bot-message);
+    color: var(--text-color);
+    align-self: flex-start;
+    border-bottom-left-radius: 5px; /* Điều chỉnh nhẹ */
+}
+
+.user-input {
+    /* width: 50%; <<< Bỏ đi, để nó tự dãn theo wrapper */
+    width: 100%; /* Chiếm chiều rộng wrapper */
+    max-width: 740px; /* Giới hạn chiều rộng (700px chatbox + 2*20px padding wrapper) */
+    display: flex;
+    gap: 10px;
+    /* position: fixed; <<< XÓA DÒNG NÀY */
+    /* bottom: 0px; <<< XÓA DÒNG NÀY */
+    background-color: var(
+        --main-color
+    ); /* Giữ lại để có thể che nội dung khi scroll (nếu cần) */
+    padding: 20px; /* Giảm padding một chút */
+    align-items: center;
+    flex-shrink: 0; /* <<< QUAN TRỌNG: Ngăn input bị co lại */
+    /* margin-top: auto; <<< Đảm bảo nó nằm dưới cùng nếu main là flex */
+}
+
+#prompt {
+    padding: 10px 15px; /* Điều chỉnh padding */
+    border-radius: 10px;
+    flex-grow: 1;
+    resize: none;
+    overflow-y: auto; /* Đổi thành auto để hiển thị scroll khi cần */
+    min-height: 42px; /* Điều chỉnh nhẹ */
+    max-height: 150px; /* Giảm nhẹ max-height */
+    font-size: 15px; /* Điều chỉnh nhẹ */
+    border: 1px solid var(--line-color); /* Thêm border */
+    background-color: #333; /* Màu nền khác cho input */
+    color: var(--text-color);
+    line-height: 1.4;
+}
+#prompt:focus {
+    outline: none;
+    border-color: var(--positive-color);
+}
+
+#submit-btn {
+    padding: 0; /* Reset padding */
+    width: 42px; /* Kích thước vuông */
+    height: 42px; /* Kích thước vuông */
+    border-radius: 10px;
+    background-color: var(--positive-color);
+    color: var(--text-color);
+    border: none;
+    flex-shrink: 0; /* Ngăn nút bị co */
+    display: flex; /* Căn giữa icon */
+    align-items: center; /* Căn giữa icon */
+    justify-content: center; /* Căn giữa icon */
+    cursor: pointer; /* Thêm con trỏ */
+    font-size: 20px; /* Kích thước icon */
+}
+
+#submit-btn:hover {
+    background-color: var(--positive-color-hover);
+}
+#submit-btn:disabled {
+    background-color: #555; /* Màu khi disable */
+    cursor: not-allowed;
+}
+#submit-btn i {
+    line-height: 1; /* Đảm bảo icon căn giữa */
+}
+
+/* CSS cho loading indicator (dot-flashing) - Giữ nguyên */
+.dot-flashing {
+    position: relative;
+    width: 5px;
+    height: 5px;
+    border-radius: 5px;
+    background-color: #6c757d;
+    color: #6c757d;
+    animation: dotFlashing 1s infinite linear alternate;
+    animation-delay: 0.5s;
+    display: inline-block;
+    margin: 0 5px;
+    top: -2px;
+}
+/* ... (phần còn lại của dot-flashing giữ nguyên) ... */
+@keyframes dotFlashing {
+    0% {
+        background-color: #6c757d;
+    }
+    50%,
+    100% {
+        background-color: #adb5bd;
+    }
+}

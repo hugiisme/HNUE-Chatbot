@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lỗi Dịch Vụ</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                padding: 20px;
+                background-color: #f8d7da;
+                color: #721c24;
+            }
+            .error-container {
+                border: 1px solid #f5c6cb;
+                padding: 15px;
+                border-radius: 5px;
+                background-color: #f5c6cb;
+            }
+            h1 {
+                color: #721c24;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="error-container">
+            <h1>Đã xảy ra lỗi</h1>
+            <p>
+                Rất tiếc, dịch vụ chat tạm thời không khả dụng do sự cố khởi
+                tạo.
+            </p>
+            <p><strong>Chi tiết lỗi (dành cho quản trị viên):</strong></p>
+            <pre>{{ error_message }}</pre>
+            <p><a href="/">Thử lại trang chủ</a></p>
+        </div>
+    </body>
+</html>

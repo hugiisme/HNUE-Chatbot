@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Django
+*.log
+db.sqlite3
+*.sqlite3
+
+# VSCode
+.vscode/
+
+# Environment variables
+.env
+
+# Python dependencies (if using Pipenv)
+Pipfile.lock
+
+# ChromaDB vector store (chỉ ignore nếu bạn muốn rebuild mỗi lần)
+# Nếu bạn ĐẨY DB LÊN GIT để dùng lại, thì COMMENT dòng này
+# vectorstore_db/
+
+# MacOS and Windows
+.DS_Store
+Thumbs.db
+
+# Other cache or temp files
+*.bak
+*.swp
+*.tmp

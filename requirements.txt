@@ -1,0 +1,16 @@
+# requirements.txt
+
+django         # Your Django version
+python-dotenv  # For loading .env files
+pymongo        # For MongoDB
+google-generativeai # For Gemini API interaction (base library)
+
+# --- RAG Specific Libraries ---
+langchain                   # Core LangChain library
+langchain-google-genai      # LangChain integration for Gemini models (Chat & Embeddings)
+langchain-community         # For Chroma, Loaders, TextSplitters etc.
+chromadb                    # The vector database
+pypdf                       # PDF Loader dependency
+python-docx                 # Docx2txtLoader dependency
+docx2txt                    # Docx2txtLoader dependency
+# --- End RAG Specific ---
