@@ -12,7 +12,7 @@
             href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
             rel="stylesheet"
         />
-        {{ chat_history|json_script:"chat-history-data" }}
+        {{ chat_history_json|json_script:"chat-history-data" }}
     </head>
     <body>
         <nav id="sidebar">
@@ -57,7 +57,7 @@
                 <ul class="submenu">
                     {% if chat_list %} {% for chat in chat_list %}
                     <li
-                        class="submenu-content {% if chat.chat_id == viewed_chat_id %}active{% endif %}"
+                        class="submenu-content {% if chat.chat_id == current_chat_id %}active{% endif %}"
                         data-chat-id="{{ chat.chat_id }}"
                     >
                         <div class="chat-list-item">
@@ -67,35 +67,30 @@
                                 title="{{ chat.title|escape }}"
                             >
                                 <span class="chat-title-text"
-                                    >{{ chat.title|escape }}</span
+                                    >{{ chat.title}}</span
                                 >
                             </a>
                             <button class="chat-settings-btn" title="Tùy chọn">
                                 <i class="bx bx-dots-horizontal-rounded"></i>
                             </button>
-                            <div
-                                class="edit-title-container"
-                                style="display: none"
-                            >
-                                <input
-                                    type="text"
-                                    class="edit-title-input"
-                                    value="{{ chat.title|escape }}"
-                                />
-                                <div class="edit-title-actions">
-                                    <button class="save-title-btn" title="Lưu">
-                                        <i class="bx bx-check"></i>
-                                    </button>
-                                    <button
-                                        class="cancel-title-btn"
-                                        title="Hủy"
-                                    >
-                                        <i class="bx bx-x"></i>
-                                    </button>
-                                </div>
+                        </div>
+                        <div class="edit-title-container">
+                            <input
+                                type="text"
+                                class="edit-title-input"
+                                value="{{ chat.title|escape }}"
+                                data-original-title="{{ chat.title|escape }}"
+                            />
+                            <div class="edit-title-actions">
+                                <button class="save-title-btn" title="Lưu">
+                                    <i class="bx bx-check"></i>
+                                </button>
+                                <button class="cancel-title-btn" title="Hủy">
+                                    <i class="bx bx-x"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="chat-options-menu" style="display: none">
+                        <div class="chat-options-menu">
                             <button class="rename-chat-btn">
                                 <i class="bx bx-pencil"></i> Đổi tên
                             </button>
@@ -105,15 +100,7 @@
                         </div>
                     </li>
                     {% endfor %} {% else %}
-                    <li
-                        class="no-chats-placeholder"
-                        style="
-                            padding: 10px;
-                            color: #888;
-                            font-style: italic;
-                            text-align: center;
-                        "
-                    >
+                    <li class="no-chats-placeholder">
                         <span>Chưa có cuộc trò chuyện nào.</span>
                     </li>
                     {% endif %}
@@ -127,9 +114,10 @@
                 </button>
             </form>
         </nav>
+
         <main>
+            <h1 class="main-title">Gemini Chat</h1>
             <div class="chat-area-wrapper">
-                <h1 class="main-title">Gemini Chat</h1>
                 <div class="chatbox"></div>
                 <div class="user-input">
                     <textarea
@@ -148,12 +136,14 @@
 
         <div id="confirmation-modal" class="modal-overlay">
             <div class="modal-content">
-                <p id="confirmation-message"></p>
-                <div class="modal-buttons">
-                    <button id="confirm-yes-btn" class="confirm-btn">
+                <p id="confirmation-message">Are you sure?</p>
+                <div class="modal-actions">
+                    <button id="confirm-yes-btn" class="btn btn-danger">
                         Yes
                     </button>
-                    <button id="confirm-no-btn" class="cancel-btn">No</button>
+                    <button id="confirm-no-btn" class="btn btn-secondary">
+                        No
+                    </button>
                 </div>
             </div>
         </div>

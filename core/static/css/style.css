@@ -1,8 +1,9 @@
+/* style.css */
 @import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@400;600&display=swap");
 
 :root {
     --main-color: #212121;
-    --sidebar-color: #171717; /* Giả sử bạn có CSS cho sidebar ở nav.css */
+    --sidebar-color: #171717;
     --text-color: #ffffff;
     --line-color: #595959;
     --negative-color: #ff6347;
@@ -26,56 +27,65 @@ html {
 body {
     min-height: 100dvh;
     display: grid;
-    grid-template-columns: auto 1fr; /* Giữ nguyên layout grid cho body */
-    background-color: var(--main-color); /* Có thể đặt BG ở body */
+    grid-template-columns: auto 1fr;
+    background-color: var(--main-color);
     color: var(--text-color);
-    overflow: hidden; /* Ngăn body scroll */
+    overflow: hidden;
 }
 
-/* Sidebar styling (từ nav.css hoặc thêm vào đây nếu cần) */
 nav#sidebar {
     background-color: var(--sidebar-color);
-    overflow-y: auto; /* Cho phép sidebar scroll nếu nội dung dài */
-    height: 100dvh; /* Đảm bảo sidebar chiếm đủ chiều cao */
+    overflow-y: auto;
+    height: 100dvh;
 }
 
 main {
-    background-color: var(--main-color); /* Có thể bỏ nếu đã đặt ở body */
+    background-color: var(--main-color);
     color: var(--text-color);
-    display: flex; /* Sử dụng flexbox */
-    flex-direction: column; /* Hướng dọc */
-    height: 100dvh; /* Quan trọng: main chiếm toàn bộ chiều cao viewport */
-    overflow: hidden; /* Quan trọng: Ngăn main scroll, để chatbox scroll */
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
 }
 
-/* Thêm một wrapper nếu muốn giữ chatbox và input ở giữa và có padding */
+.main-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    padding: 10px 20px;
+    text-align: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--line-color);
+    background-color: var(--main-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
 .chat-area-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Căn giữa chatbox và input */
-    flex-grow: 1; /* Chiếm không gian còn lại trong main */
-    overflow: hidden; /* Ngăn wrapper scroll */
-    padding: 40px 20px 0; /* Padding top/sides, không cần bottom vì user-input có padding */
-    width: 100%; /* Chiếm toàn bộ chiều rộng main */
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 0 20px;
+    width: 100%;
 }
 
 .chatbox {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    overflow-y: auto; /* <<< QUAN TRỌNG: Cho phép chatbox scroll */
-    /* padding: 10px; */ /* Bỏ padding này, dùng padding của wrapper */
-    /* border-radius: 10px; */ /* Có thể giữ */
-    width: 100%; /* Chiếm chiều rộng của wrapper */
-    max-width: 700px; /* Giới hạn chiều rộng tối đa */
-    flex-grow: 1; /* <<< QUAN TRỌNG: Chiếm không gian dọc còn lại */
-    padding: 20px; /* Padding bên trong chatbox */
-    /* margin-bottom: 90px; <<< XÓA DÒNG NÀY */
-    scrollbar-width: thin; /* Tùy chọn: scrollbar mỏng hơn */
-    scrollbar-color: #595959 var(--main-color); /* Tùy chọn: màu scrollbar */
+    overflow-y: auto;
+    width: 100%;
+    max-width: 700px;
+    flex-grow: 1;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #595959 var(--main-color);
 }
 
-/* Tùy chỉnh scrollbar cho Webkit (Chrome, Safari, Edge) */
 .chatbox::-webkit-scrollbar {
     width: 6px;
 }
@@ -89,55 +99,49 @@ main {
 
 .message {
     padding: 10px 15px;
-    max-width: 70%; /* Tăng nhẹ max-width */
+    max-width: 80%;
     border-radius: 15px;
     font-size: 14px;
     word-wrap: break-word;
-    line-height: 1.4; /* Thêm line-height */
+    line-height: 1.4;
 }
 
 .user-message {
     background-color: var(--user-message);
     color: var(--text-color);
     align-self: flex-end;
-    border-bottom-right-radius: 5px; /* Điều chỉnh nhẹ */
+    border-bottom-right-radius: 5px;
 }
 
 .bot-message {
     background-color: var(--bot-message);
     color: var(--text-color);
     align-self: flex-start;
-    border-bottom-left-radius: 5px; /* Điều chỉnh nhẹ */
+    border-bottom-left-radius: 5px;
 }
 
 .user-input {
-    /* width: 50%; <<< Bỏ đi, để nó tự dãn theo wrapper */
-    width: 100%; /* Chiếm chiều rộng wrapper */
-    max-width: 740px; /* Giới hạn chiều rộng (700px chatbox + 2*20px padding wrapper) */
+    width: 100%;
+    max-width: 740px;
     display: flex;
     gap: 10px;
-    /* position: fixed; <<< XÓA DÒNG NÀY */
-    /* bottom: 0px; <<< XÓA DÒNG NÀY */
-    background-color: var(
-        --main-color
-    ); /* Giữ lại để có thể che nội dung khi scroll (nếu cần) */
-    padding: 20px; /* Giảm padding một chút */
+    background-color: var(--main-color);
+    padding: 20px;
     align-items: center;
-    flex-shrink: 0; /* <<< QUAN TRỌNG: Ngăn input bị co lại */
-    /* margin-top: auto; <<< Đảm bảo nó nằm dưới cùng nếu main là flex */
+    flex-shrink: 0;
 }
 
 #prompt {
-    padding: 10px 15px; /* Điều chỉnh padding */
+    padding: 10px 15px;
     border-radius: 10px;
     flex-grow: 1;
     resize: none;
-    overflow-y: auto; /* Đổi thành auto để hiển thị scroll khi cần */
-    min-height: 42px; /* Điều chỉnh nhẹ */
-    max-height: 150px; /* Giảm nhẹ max-height */
-    font-size: 15px; /* Điều chỉnh nhẹ */
-    border: 1px solid var(--line-color); /* Thêm border */
-    background-color: #333; /* Màu nền khác cho input */
+    overflow-y: auto;
+    min-height: 42px;
+    max-height: 25vh;
+    font-size: 15px;
+    border: 1px solid var(--line-color);
+    background-color: #333;
     color: var(--text-color);
     line-height: 1.4;
 }
@@ -145,35 +149,46 @@ main {
     outline: none;
     border-color: var(--positive-color);
 }
+#prompt.disabled {
+    background-color: #444;
+    cursor: not-allowed;
+}
 
 #submit-btn {
-    padding: 0; /* Reset padding */
-    width: 42px; /* Kích thước vuông */
-    height: 42px; /* Kích thước vuông */
+    padding: 0;
+    width: 42px;
+    height: 42px;
     border-radius: 10px;
     background-color: var(--positive-color);
     color: var(--text-color);
     border: none;
-    flex-shrink: 0; /* Ngăn nút bị co */
-    display: flex; /* Căn giữa icon */
-    align-items: center; /* Căn giữa icon */
-    justify-content: center; /* Căn giữa icon */
-    cursor: pointer; /* Thêm con trỏ */
-    font-size: 20px; /* Kích thước icon */
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
 }
 
-#submit-btn:hover {
+#submit-btn:hover:not(:disabled) {
     background-color: var(--positive-color-hover);
 }
-#submit-btn:disabled {
-    background-color: #555; /* Màu khi disable */
+#submit-btn:disabled,
+#submit-btn.disabled {
+    background-color: #555;
     cursor: not-allowed;
 }
 #submit-btn i {
-    line-height: 1; /* Đảm bảo icon căn giữa */
+    line-height: 1;
 }
 
-/* CSS cho loading indicator (dot-flashing) - Giữ nguyên */
+.loading-dots-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
 .dot-flashing {
     position: relative;
     width: 5px;
@@ -184,16 +199,34 @@ main {
     animation: dotFlashing 1s infinite linear alternate;
     animation-delay: 0.5s;
     display: inline-block;
-    margin: 0 5px;
-    top: -2px;
+    margin: 0 3px;
 }
-/* ... (phần còn lại của dot-flashing giữ nguyên) ... */
+
+.dot-flashing:nth-child(1) {
+    animation-delay: 0s;
+}
+.dot-flashing:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.dot-flashing:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
 @keyframes dotFlashing {
     0% {
         background-color: #6c757d;
+        transform: scale(0.8);
     }
     50%,
     100% {
         background-color: #adb5bd;
+        transform: scale(1.2);
     }
+}
+
+.no-chats-placeholder {
+    padding: 15px;
+    color: #777;
+    font-style: italic;
+    text-align: center;
 }

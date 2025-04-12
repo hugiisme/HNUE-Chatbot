@@ -1,3 +1,4 @@
+# services.py
 import pymongo
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold, StopCandidateException
@@ -19,10 +20,7 @@ from langchain.prompts import PromptTemplate, ChatPromptTemplate, MessagesPlaceh
 from langchain.schema.runnable import RunnablePassthrough, RunnableLambda, RunnableBranch
 from langchain.schema.output_parser import StrOutputParser
 from langchain.docstore.document import Document
-# Keep these imports for messages
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
-
-# Import ChatPromptValue from its correct core location
 from langchain_core.prompt_values import ChatPromptValue
 
 
@@ -32,14 +30,13 @@ MONGO_COLLECTION_NAME = settings.MONGO_COLLECTION_NAME
 GEMINI_API_KEY = settings.GEMINI_API_KEY
 TUNED_MODEL_NAME = settings.TUNED_MODEL_NAME
 HISTORY_LIMIT = settings.CHAT_HISTORY_LIMIT
-CHAT_TITLE_MAX_LENGTH = settings.CHAT_TITLE_MAX_LENGTH
+CHAT_TITLE_MAX_LENGTH = settings.CHAT_TITLE_MAX_LENGTH # Max length for display, not necessarily generation
 GENERATION_CONFIG = settings.GENERATION_CONFIG
 CUSTOM_SAFETY_SETTINGS = settings.CUSTOM_SAFETY_SETTINGS
 VECTORSTORE_PATH = str(settings.VECTORSTORE_PATH)
 GEMINI_EMBEDDING_MODEL = settings.GEMINI_EMBEDDING_MODEL
-# Ensure GENERAL_SYSTEM_MESSAGE in settings.py also has language instruction
 GENERAL_SYSTEM_MESSAGE = settings.GENERAL_SYSTEM_MESSAGE
-
+DEFAULT_CHAT_TITLE = "Untitled Chat" # Define a default title
 
 mongo_client = None
 chat_collection = None
@@ -54,7 +51,6 @@ rag_available = False
 direct_genai_model = None
 
 
-# --- MongoDB Connection ---
 try:
     if not MONGO_URI or not MONGO_DB_NAME or not MONGO_COLLECTION_NAME:
         raise ValueError("MongoDB configuration missing in settings.")
@@ -77,7 +73,6 @@ except Exception as e:
     logger.error(initialization_error, exc_info=True)
     chat_collection = None
 
-# --- Gemini Model Initialization ---
 if not initialization_error:
     try:
         if not GEMINI_API_KEY: raise ValueError("GEMINI_API_KEY missing.")
@@ -103,7 +98,6 @@ if not initialization_error:
         initialization_error = sdk_init_error
         direct_genai_model = None
 
-# --- RAG Setup ---
 if not initialization_error and direct_genai_model and os.path.exists(VECTORSTORE_PATH):
     if not os.listdir(VECTORSTORE_PATH):
          logger.warning(f"Vector store path '{VECTORSTORE_PATH}' exists but is empty. RAG IS DISABLED.")
@@ -137,7 +131,6 @@ if not initialization_error and direct_genai_model and os.path.exists(VECTORSTOR
                 )
                 logger.info(f"[RAG] Retriever created (search_type=similarity, search_kwargs={{'k': 5}}).")
 
-                # --- MODIFIED: Added language instruction to RAG Prompt ---
                 rag_template = """Answer the following question using the provided context. Try to base your answer directly on the information found.
 If the context clearly doesn't contain the information needed to answer, state that the provided documents do not seem to contain the answer.
 ***Importantly, present the answer in the same language as the QUESTION is asked.***
@@ -149,11 +142,9 @@ QUESTION:
 {question}
 
 ANSWER:"""
-                # ----------------------------------------------------------
                 rag_prompt = PromptTemplate.from_template(rag_template)
-                logger.info("[RAG] Using RAG prompt with language instruction.") # Updated log message
+                logger.info("[RAG] Using RAG prompt with language instruction.")
 
-                # --- format_docs function (keep as before) ---
                 def format_docs(docs: list[Document]) -> str:
                     if not docs:
                         logger.warning("[RAG] Retriever returned NO documents for the query.")
@@ -174,7 +165,6 @@ ANSWER:"""
                     logger.debug(f"[RAG] Formatted context from sources: [{log_sources}] for prompt.")
                     return "\n\n".join(formatted)
 
-                # --- invoke_direct_model_rag function (keep as before) ---
                 def invoke_direct_model_rag(prompt_value: str):
                     try:
                         response = direct_genai_model.generate_content(prompt_value)
@@ -204,12 +194,10 @@ ANSWER:"""
                         logger.error(f"[RAG] Unexpected error invoking model during RAG: {e}", exc_info=True)
                         return f"Error during RAG generation process: {e}"
 
-                # --- log_final_rag_prompt function (keep as before) ---
                 def log_final_rag_prompt(prompt_str: str) -> str:
                     logger.debug(f"[RAG] Final combined prompt string being sent to LLM:\n--- START RAG PROMPT ---\n{prompt_str}\n--- END RAG PROMPT ---")
                     return prompt_str
 
-                # --- RAG Chain Definition (keep as before) ---
                 rag_chain = (
                     {"context": retriever | format_docs, "question": RunnablePassthrough()}
                     | rag_prompt
@@ -218,7 +206,7 @@ ANSWER:"""
                     | RunnableLambda(invoke_direct_model_rag)
                 )
                 rag_available = True
-                logger.info("[RAG] RAG chain created with language instruction, similarity retriever, and enhanced logging. RAG IS ENABLED.") # Updated log message
+                logger.info("[RAG] RAG chain created with language instruction, similarity retriever, and enhanced logging. RAG IS ENABLED.")
 
         except Exception as e:
             rag_init_error = f"[RAG] RAG component initialization failed: {e}"
@@ -232,11 +220,9 @@ elif not initialization_error and direct_genai_model:
      rag_available = False
 
 
-# --- General Chat & Router Setup ---
 if direct_genai_model:
     try:
         def invoke_direct_model_general(prompt_value: ChatPromptValue):
-            """Invokes the direct Gemini model for General Chat/Router, handling history format."""
             try:
                 langchain_messages = prompt_value.to_messages()
                 history_for_api = []
@@ -247,7 +233,6 @@ if direct_genai_model:
                     if isinstance(msg, SystemMessage):
                          system_instruction = msg.content
                          logger.debug(f"General/Router extracted system instruction (first 100 chars): {system_instruction[:100]}...")
-                         # Check if GENERAL_SYSTEM_MESSAGE already contains language instruction
                          if "respond in the same language" not in system_instruction.lower():
                              logger.warning("GENERAL_SYSTEM_MESSAGE in settings.py might be missing language instruction!")
                          continue
@@ -259,14 +244,12 @@ if direct_genai_model:
                      return "Error: Cannot generate response without valid input message(s)."
 
                 if system_instruction:
-                    # System instruction handled via settings.py and potentially model tuning
                     logger.debug("System instruction provided via settings.py/prompt template.")
 
                 logger.debug(f"Invoking direct model (General/Router) with {len(history_for_api)} history entries.")
 
                 response = direct_genai_model.generate_content(
                     history_for_api,
-                    # system_instruction=... # Typically not used directly here with Gemini history format
                 )
 
                 if not response.candidates:
@@ -294,7 +277,6 @@ if direct_genai_model:
                 logger.error(f"Error invoking direct model (General/Router): {e}", exc_info=True)
                 return f"Error during generation: {e}"
 
-        # --- Router Chain (keep as before) ---
         router_template = """Classify the user's query. Your goal is to decide if the query requires searching specific documents for a factual answer.
 
 Output only 'SEARCH_DOCS' if the query asks for specific factual details, definitions, steps, criteria, data, or information likely found within uploaded documents (such as educational standards, curriculum details, project specifications, user guides, procedures, reports). Examples of queries needing SEARCH_DOCS: "What are the criteria for X?", "List the steps for Y.", "Define Z according to the standard document.", "What does document A say about topic B?".
@@ -327,8 +309,6 @@ Classification:"""
         )
         logger.info("Router chain created.")
 
-        # --- General Chat Chain (keep as before) ---
-        # Ensure GENERAL_SYSTEM_MESSAGE in settings.py includes language instructions
         general_prompt = ChatPromptTemplate.from_messages([
             SystemMessage(content=GENERAL_SYSTEM_MESSAGE),
             MessagesPlaceholder(variable_name="chat_history"),
@@ -353,8 +333,6 @@ elif not initialization_error:
     router_chain = general_chat_chain = None
 
 
-# --- Helper Functions (keep as before) ---
-
 def format_history_for_langchain(db_history: list) -> list:
     messages = []
     for msg in db_history:
@@ -366,9 +344,10 @@ def format_history_for_langchain(db_history: list) -> list:
         elif role == "model": messages.append(AIMessage(content=content))
     return messages
 
-# --- Core API Functions (keep as before) ---
 
-def get_response(user_query: str, chat_id: str) -> str:
+# Modified signature to return generated title
+def get_response(user_query: str, chat_id: str) -> tuple[str, str | None]:
+    generated_title_for_new_chat = None # Initialize title for new chat return
     if not router_chain or not general_chat_chain or not direct_genai_model:
         core_error = initialization_error or "Chatbot core components not initialized."
         logger.error(f"[{chat_id}] Cannot get response: {core_error}")
@@ -377,7 +356,24 @@ def get_response(user_query: str, chat_id: str) -> str:
     user_query = str(user_query or "").strip()
     if not user_query:
         logger.warning(f"[{chat_id}] Received empty user query.")
-        return "Please enter a query."
+        return "Please enter a query.", None # Return None for title
+
+    # Check if this is the first message for the given chat_id *before* loading history
+    is_first_message = False
+    if chat_id and chat_collection:
+        try:
+            is_first_message = chat_collection.count_documents({"chat_id": chat_id}, limit=1) == 0
+            if is_first_message:
+                logger.info(f"[{chat_id}] Detected first message for potential title generation.")
+                # Generate title here *before* saving, so it can be returned immediately
+                generated_title_for_new_chat = generate_title_summary(user_query)
+                if generated_title_for_new_chat:
+                    logger.info(f"[{chat_id}] Generated title summary: '{generated_title_for_new_chat}'")
+                else:
+                    logger.warning(f"[{chat_id}] Failed to generate title summary for first message.")
+        except Exception as e:
+             logger.error(f"[{chat_id}] Error checking for first message: {e}", exc_info=True)
+             # Continue without title generation if check fails
 
     raw_history_for_router_db = load_chat_history(chat_id, limit=4)
     router_history_str = "\n".join([f"{msg.get('role','unknown')}: {msg.get('content','')}" for msg in raw_history_for_router_db])
@@ -412,6 +408,7 @@ def get_response(user_query: str, chat_id: str) -> str:
                 })
                 response_text = f"(Note: I tried to search documents for this, but couldn't access them.)\n\n{general_response}"
 
+        # Fallback or General Chat path
         if response_text is None or response_text.startswith("Error:"):
             if routing_decision != "GENERAL_CHAT":
                  logger.info(f"[{chat_id}] Router decided '{routing_decision}', but executing General Chat chain (due to RAG unavailable/error or fallback).")
@@ -425,35 +422,81 @@ def get_response(user_query: str, chat_id: str) -> str:
 
         final_response = str(response_text) if response_text is not None else "Sorry, I encountered an issue generating a response."
         logger.debug(f"[{chat_id}] Final response generated (first 100 chars): {final_response[:100]}...")
-        return final_response
+
+        # Return the final response and the generated title (if any)
+        return final_response, generated_title_for_new_chat
 
     except StopCandidateException as safety_exception:
          logger.warning(f"[{chat_id}] Response generation blocked by safety filter at outer level: {safety_exception}")
-         return "I cannot provide a response to this query due to safety guidelines."
+         return "I cannot provide a response to this query due to safety guidelines.", None
     except Exception as e:
         logger.error(f"[{chat_id}] Critical error during get_response execution: {e}", exc_info=True)
-        return f"Sorry, a processing error occurred while handling your request."
+        return f"Sorry, a processing error occurred while handling your request.", None
 
 
 def load_chat_history(chat_id: str, limit: int = HISTORY_LIMIT) -> list:
     history = []
-    if chat_collection is None:
-        logger.warning(f"[{chat_id}] Cannot load history: MongoDB collection not available.")
+    if not chat_id or chat_collection is None:
+        # Don't log warning if chat_id is None (new chat)
+        if chat_id:
+            logger.warning(f"[{chat_id}] Cannot load history: MongoDB collection not available.")
         return history
     try:
         history_cursor = chat_collection.find(
             {"chat_id": chat_id},
             projection={"role": 1, "content": 1, "timestamp": 1, "_id": 0}
         ).sort("timestamp", pymongo.DESCENDING).limit(limit)
+        # Convert cursor to list *before* reversing
         db_history = list(history_cursor)
-        db_history.reverse()
+        db_history.reverse() # Order from oldest to newest
         history = db_history
-        logger.debug(f"[{chat_id}] Loaded {len(history)} messages from DB history (limit={limit}).")
+        if history: # Only log if history was actually loaded
+            logger.debug(f"[{chat_id}] Loaded {len(history)} messages from DB history (limit={limit}).")
     except Exception as e:
         logger.error(f"[{chat_id}] Error loading history from DB: {e}", exc_info=True)
     return history
 
-def save_chat_messages(chat_id: str, user_message: str, model_response: str):
+
+def generate_title_summary(content: str) -> str | None:
+    if not direct_genai_model:
+        logger.warning("Cannot generate title summary: Model not available.")
+        return None
+    if not content:
+        return None
+
+    try:
+        # Refined prompt for shorter, keyword-focused title
+        prompt = f"Summarize the main topic of this user message in 2-5 keywords or a very short phrase (e.g., 'VSCode Shortcuts', 'Project Inquiry', 'Document Search'). Keep it concise and relevant. User Message: '{content}'. Summary Title:"
+        response = direct_genai_model.generate_content(
+            prompt,
+            generation_config=genai.types.GenerationConfig(
+                temperature=0.2,
+                max_output_tokens=25 # Slightly more tokens for flexibility
+            ),
+            safety_settings=CUSTOM_SAFETY_SETTINGS # Use standard safety settings unless specific issues arise
+        )
+
+        if response.candidates:
+            summary = response.text.strip().replace('"', '').replace('*', '') # Clean up common markdown/quotes
+            if summary:
+                # Ensure title is not excessively long, but CHAT_TITLE_MAX_LENGTH is for display mostly
+                return summary
+            else:
+                logger.warning(f"Title summary generation resulted in empty text.")
+                return None
+        else:
+             block_reason = response.prompt_feedback.block_reason if response.prompt_feedback else 'Unknown'
+             safety_ratings = response.prompt_feedback.safety_ratings if response.prompt_feedback else 'None'
+             logger.warning(f"Title summary generation failed. Block Reason: {block_reason}. Ratings: {safety_ratings}")
+             return None
+
+    except Exception as e:
+        logger.error(f"Error generating title summary: {e}", exc_info=True)
+    return None
+
+
+# Modified to accept pre-generated title for the first message
+def save_chat_messages(chat_id: str, user_message: str, model_response: str, generated_title: str | None = None):
     if chat_collection is None:
         logger.warning(f"[{chat_id}] Cannot save messages: MongoDB collection not available.")
         return
@@ -467,13 +510,27 @@ def save_chat_messages(chat_id: str, user_message: str, model_response: str):
 
         timestamp = datetime.utcnow()
         docs_to_insert = []
+
+        # Check if this is the first user message *being saved* (less reliable than checking before)
+        # Relying on the generated_title passed from get_response is better
+        is_first_save = chat_collection.count_documents({"chat_id": chat_id, "role": "user"}, limit=1) == 0
+
         if user_message_str:
-             docs_to_insert.append({
+            user_doc = {
                  "chat_id": chat_id,
                  "role": "user",
                  "content": user_message_str,
                  "timestamp": timestamp
-             })
+            }
+            # Add the pre-generated title if provided and it's the first user message save
+            if is_first_save and generated_title:
+                user_doc["generated_title"] = generated_title
+                logger.info(f"[{chat_id}] Saving first user message with generated title: '{generated_title}'")
+            elif is_first_save and not generated_title:
+                 logger.warning(f"[{chat_id}] Saving first user message, but no generated title was provided or created.")
+
+            docs_to_insert.append(user_doc)
+
         if model_response_str:
              docs_to_insert.append({
                  "chat_id": chat_id,
@@ -494,28 +551,36 @@ def save_chat_messages(chat_id: str, user_message: str, model_response: str):
         logger.error(f"[{chat_id}] Error saving messages: {e}", exc_info=True)
 
 
-# --- Chat List & Management (keep as before) ---
-
 def get_chat_list() -> list:
     chat_list_result = []
     if chat_collection is None:
         logger.warning("Cannot get chat list: MongoDB collection not available.")
         return chat_list_result
     try:
+        # Optimized pipeline to fetch necessary fields directly
         pipeline = [
             {"$sort": {"timestamp": pymongo.ASCENDING}},
             {"$group": {
                 "_id": "$chat_id",
-                "first_doc": {"$first": "$$ROOT"},
+                # Get fields from the *first document* within the group (chat_id)
+                "first_doc_id": {"$first": "$_id"},
                 "latest_ts": {"$last": "$timestamp"}
             }},
+             # Lookup the first document again to get its details easily
+            {"$lookup": {
+                "from": MONGO_COLLECTION_NAME,
+                "localField": "first_doc_id",
+                "foreignField": "_id",
+                "as": "first_message_details"
+            }},
+            # Deconstruct the array from lookup
+            {"$unwind": "$first_message_details"},
             {"$sort": {"latest_ts": pymongo.DESCENDING}},
             {"$project": {
                 "chat_id": "$_id",
-                "first_message_content": "$first_doc.content",
-                "first_message_role": "$first_doc.role",
-                "custom_title": "$first_doc.custom_title",
-                "first_message_timestamp": "$first_doc.timestamp",
+                # Get titles directly from the looked-up first message
+                "custom_title": "$first_message_details.custom_title",
+                "generated_title": "$first_message_details.generated_title",
                 "_id": 0
             }}
         ]
@@ -525,32 +590,14 @@ def get_chat_list() -> list:
             chat_id = chat_data.get('chat_id')
             if not chat_id: continue
 
+            # Determine the title: Custom > Generated > Default Placeholder
             title = chat_data.get('custom_title')
             if not title:
-                first_content = str(chat_data.get('first_message_content', '') or "").strip()
-                first_role = chat_data.get('first_message_role')
-                max_len = CHAT_TITLE_MAX_LENGTH
+                title = chat_data.get('generated_title')
+            if not title:
+                title = DEFAULT_CHAT_TITLE # Use the defined default
 
-                if first_role == 'user' and first_content:
-                    title = first_content[:max_len] + ('...' if len(first_content) > max_len else '')
-                elif first_role == 'model' and first_content:
-                     prefix = "Bot: "
-                     available_len = max_len - len(prefix)
-                     if available_len > 0:
-                         title = prefix + first_content[:available_len] + ('...' if len(first_content) > available_len else '')
-                     else:
-                          title = first_content[:max_len] + ('...' if len(first_content) > max_len else '')
-
-                if not title:
-                    timestamp = chat_data.get('first_message_timestamp')
-                    default_title = f"Chat {chat_id[:6]}..."
-                    if timestamp and isinstance(timestamp, datetime):
-                        try:
-                            default_title = timestamp.strftime("Chat %b %d, %H:%M")
-                        except ValueError: pass
-                    title = default_title
-
-            chat_list_result.append({"chat_id": chat_id, "title": title or f"Chat {chat_id[:6]}..."})
+            chat_list_result.append({"chat_id": chat_id, "title": title})
 
         logger.info(f"Retrieved {len(chat_list_result)} unique chats.")
     except OperationFailure as ofe:
@@ -574,11 +621,23 @@ def update_session_title(chat_id: str, new_title: str) -> bool:
              logger.warning(f"[{chat_id}] Cannot update title: Chat session not found or has no messages.")
              return False
 
+        clean_title = str(new_title or "").strip()
+        # If the cleaned title is empty OR is the same as the default, unset custom_title
+        # This allows the generated_title (or default) to show through again.
+        if not clean_title or clean_title == DEFAULT_CHAT_TITLE:
+            logger.info(f"[{chat_id}] Unsetting custom title (new title empty or default).")
+            update_op = {"$unset": {"custom_title": ""}}
+        else:
+            logger.info(f"[{chat_id}] Setting custom title to: '{clean_title}'")
+            update_op = {"$set": {"custom_title": clean_title}}
+
+
         result = chat_collection.update_one(
             {"_id": first_message['_id']},
-            {"$set": {"custom_title": str(new_title or "").strip()}}
+            update_op
         )
-        success = result.modified_count > 0
+        # Success if modified, OR if matched and the operation was an unset (meaning title was cleared)
+        success = result.modified_count > 0 or (result.matched_count > 0 and "$unset" in update_op)
         logger.info(f"[{chat_id}] Update title result: Matched={result.matched_count}, Modified={result.modified_count}. Success: {success}")
         return success
     except OperationFailure as ofe:
