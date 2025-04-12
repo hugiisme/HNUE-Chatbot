@@ -58,7 +58,11 @@ direct_genai_model = None
 try:
     if not MONGO_URI or not MONGO_DB_NAME or not MONGO_COLLECTION_NAME:
         raise ValueError("MongoDB configuration missing in settings.")
-    mongo_client = pymongo.MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    mongo_client = pymongo.MongoClient(
+                    MONGO_URI,
+                    serverSelectionTimeoutMS=5000,
+                    tls=True  
+                )
     mongo_client.server_info()
     mongo_db = mongo_client[MONGO_DB_NAME]
     chat_collection = mongo_db[MONGO_COLLECTION_NAME]
