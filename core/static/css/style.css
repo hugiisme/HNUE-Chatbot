@@ -2,11 +2,11 @@
 
 :root {
     --main-color: #212121;
-    --sidebar-color: #171717; /* Giả sử bạn có CSS cho sidebar ở nav.css */
+    --sidebar-color: #171717;
     --text-color: #ffffff;
     --line-color: #595959;
     --negative-color: #ff6347;
-    --negative-color-hover: #ff0000;
+    --negative-color-hover: #e0442d;
     --positive-color: #28a745;
     --positive-color-hover: #218838;
     --user-message: #474747;
@@ -26,61 +26,63 @@ html {
 body {
     min-height: 100dvh;
     display: grid;
-    grid-template-columns: auto 1fr; /* Giữ nguyên layout grid cho body */
-    background-color: var(--main-color); /* Có thể đặt BG ở body */
+    grid-template-columns: auto 1fr;
+    background-color: var(--main-color);
     color: var(--text-color);
-    overflow: hidden; /* Ngăn body scroll */
+    overflow: hidden;
 }
 
-/* Sidebar styling (từ nav.css hoặc thêm vào đây nếu cần) */
 nav#sidebar {
     background-color: var(--sidebar-color);
-    overflow-y: auto; /* Cho phép sidebar scroll nếu nội dung dài */
-    height: 100dvh; /* Đảm bảo sidebar chiếm đủ chiều cao */
+    overflow-y: auto;
+    height: 100dvh;
 }
 
 main {
-    background-color: var(--main-color); /* Có thể bỏ nếu đã đặt ở body */
+    background-color: var(--main-color);
     color: var(--text-color);
-    display: flex; /* Sử dụng flexbox */
-    flex-direction: column; /* Hướng dọc */
-    height: 100dvh; /* Quan trọng: main chiếm toàn bộ chiều cao viewport */
-    overflow: hidden; /* Quan trọng: Ngăn main scroll, để chatbox scroll */
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
 }
 
-/* Thêm một wrapper nếu muốn giữ chatbox và input ở giữa và có padding */
 .chat-area-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Căn giữa chatbox và input */
-    flex-grow: 1; /* Chiếm không gian còn lại trong main */
-    overflow: hidden; /* Ngăn wrapper scroll */
-    padding: 40px 20px 0; /* Padding top/sides, không cần bottom vì user-input có padding */
-    width: 100%; /* Chiếm toàn bộ chiều rộng main */
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 20px 20px 0;
+    width: 100%;
+}
+.main-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #ccc; /* Lighter title */
+    flex-shrink: 0;
+    display: none; /* Hide by default, only show if needed */
 }
 
 .chatbox {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    overflow-y: auto; /* <<< QUAN TRỌNG: Cho phép chatbox scroll */
-    /* padding: 10px; */ /* Bỏ padding này, dùng padding của wrapper */
-    /* border-radius: 10px; */ /* Có thể giữ */
-    width: 100%; /* Chiếm chiều rộng của wrapper */
-    max-width: 700px; /* Giới hạn chiều rộng tối đa */
-    flex-grow: 1; /* <<< QUAN TRỌNG: Chiếm không gian dọc còn lại */
-    padding: 20px; /* Padding bên trong chatbox */
-    /* margin-bottom: 90px; <<< XÓA DÒNG NÀY */
-    scrollbar-width: thin; /* Tùy chọn: scrollbar mỏng hơn */
-    scrollbar-color: #595959 var(--main-color); /* Tùy chọn: màu scrollbar */
+    gap: 12px; /* Slightly increased gap */
+    overflow-y: auto;
+    width: 100%;
+    max-width: 800px; /* Increased max-width slightly */
+    flex-grow: 1;
+    padding: 0 10px 20px 10px; /* Adjusted padding */
+    scrollbar-width: thin;
+    scrollbar-color: #595959 var(--main-color);
 }
 
-/* Tùy chỉnh scrollbar cho Webkit (Chrome, Safari, Edge) */
 .chatbox::-webkit-scrollbar {
     width: 6px;
 }
 .chatbox::-webkit-scrollbar-track {
-    background: var(--main-color);
+    background: transparent; /* Make track transparent */
 }
 .chatbox::-webkit-scrollbar-thumb {
     background-color: var(--line-color);
@@ -89,111 +91,213 @@ main {
 
 .message {
     padding: 10px 15px;
-    max-width: 70%; /* Tăng nhẹ max-width */
-    border-radius: 15px;
-    font-size: 14px;
+    max-width: 75%; /* Adjusted max-width */
+    border-radius: 18px; /* Slightly rounder */
+    font-size: 0.95rem; /* Adjusted font size */
     word-wrap: break-word;
-    line-height: 1.4; /* Thêm line-height */
+    line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .user-message {
     background-color: var(--user-message);
     color: var(--text-color);
     align-self: flex-end;
-    border-bottom-right-radius: 5px; /* Điều chỉnh nhẹ */
+    border-bottom-right-radius: 5px;
 }
 
 .bot-message {
     background-color: var(--bot-message);
     color: var(--text-color);
     align-self: flex-start;
-    border-bottom-left-radius: 5px; /* Điều chỉnh nhẹ */
+    border-bottom-left-radius: 5px;
+}
+.bot-message pre {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 8px 0;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.9em;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #444;
+}
+.bot-message pre::-webkit-scrollbar {
+    height: 6px;
+}
+.bot-message pre::-webkit-scrollbar-track {
+    background: #444;
+    border-radius: 3px;
+}
+.bot-message pre::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
 }
 
 .user-input {
-    /* width: 50%; <<< Bỏ đi, để nó tự dãn theo wrapper */
-    width: 100%; /* Chiếm chiều rộng wrapper */
-    max-width: 740px; /* Giới hạn chiều rộng (700px chatbox + 2*20px padding wrapper) */
+    width: 100%;
+    max-width: 840px; /* Match chatbox max-width + padding */
     display: flex;
     gap: 10px;
-    /* position: fixed; <<< XÓA DÒNG NÀY */
-    /* bottom: 0px; <<< XÓA DÒNG NÀY */
-    background-color: var(
-        --main-color
-    ); /* Giữ lại để có thể che nội dung khi scroll (nếu cần) */
-    padding: 20px; /* Giảm padding một chút */
-    align-items: center;
-    flex-shrink: 0; /* <<< QUAN TRỌNG: Ngăn input bị co lại */
-    /* margin-top: auto; <<< Đảm bảo nó nằm dưới cùng nếu main là flex */
+    background-color: var(--main-color);
+    padding: 15px 20px 20px 20px; /* Adjusted padding */
+    align-items: flex-end; /* Align items to bottom for multi-line text */
+    flex-shrink: 0;
 }
 
 #prompt {
-    padding: 10px 15px; /* Điều chỉnh padding */
-    border-radius: 10px;
+    padding: 10px 15px;
+    border-radius: 21px; /* Match button height */
     flex-grow: 1;
     resize: none;
-    overflow-y: auto; /* Đổi thành auto để hiển thị scroll khi cần */
-    min-height: 42px; /* Điều chỉnh nhẹ */
-    max-height: 150px; /* Giảm nhẹ max-height */
-    font-size: 15px; /* Điều chỉnh nhẹ */
-    border: 1px solid var(--line-color); /* Thêm border */
-    background-color: #333; /* Màu nền khác cho input */
+    overflow-y: auto;
+    min-height: 42px;
+    max-height: 200px; /* Increased max height */
+    font-size: 1rem; /* Adjusted font size */
+    border: 1px solid var(--line-color);
+    background-color: #3a3a3a;
     color: var(--text-color);
     line-height: 1.4;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #3a3a3a;
 }
+#prompt::-webkit-scrollbar {
+    width: 5px;
+}
+#prompt::-webkit-scrollbar-track {
+    background: #3a3a3a;
+}
+#prompt::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
+}
+
 #prompt:focus {
     outline: none;
     border-color: var(--positive-color);
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
 }
 
 #submit-btn {
-    padding: 0; /* Reset padding */
-    width: 42px; /* Kích thước vuông */
-    height: 42px; /* Kích thước vuông */
-    border-radius: 10px;
+    padding: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%; /* Make it round */
     background-color: var(--positive-color);
     color: var(--text-color);
     border: none;
-    flex-shrink: 0; /* Ngăn nút bị co */
-    display: flex; /* Căn giữa icon */
-    align-items: center; /* Căn giữa icon */
-    justify-content: center; /* Căn giữa icon */
-    cursor: pointer; /* Thêm con trỏ */
-    font-size: 20px; /* Kích thước icon */
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.2s ease;
 }
 
 #submit-btn:hover {
     background-color: var(--positive-color-hover);
 }
 #submit-btn:disabled {
-    background-color: #555; /* Màu khi disable */
+    background-color: #555;
     cursor: not-allowed;
+    opacity: 0.7;
 }
 #submit-btn i {
-    line-height: 1; /* Đảm bảo icon căn giữa */
+    line-height: 1;
+    transform: translateX(1px); /* Center icon better */
 }
 
-/* CSS cho loading indicator (dot-flashing) - Giữ nguyên */
 .dot-flashing {
     position: relative;
-    width: 5px;
-    height: 5px;
-    border-radius: 5px;
-    background-color: #6c757d;
-    color: #6c757d;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #aaa;
+    color: #aaa;
     animation: dotFlashing 1s infinite linear alternate;
     animation-delay: 0.5s;
     display: inline-block;
-    margin: 0 5px;
-    top: -2px;
+    margin: 0 3px;
+    vertical-align: middle;
 }
-/* ... (phần còn lại của dot-flashing giữ nguyên) ... */
+.dot-flashing::before,
+.dot-flashing::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #aaa;
+    color: #aaa;
+}
+.dot-flashing::before {
+    left: -10px;
+    animation: dotFlashing 1s infinite alternate;
+    animation-delay: 0s;
+}
+.dot-flashing::after {
+    left: 10px;
+    animation: dotFlashing 1s infinite alternate;
+    animation-delay: 1s;
+}
+
 @keyframes dotFlashing {
     0% {
-        background-color: #6c757d;
+        background-color: #aaa;
     }
     50%,
     100% {
-        background-color: #adb5bd;
+        background-color: #fff;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        grid-template-columns: 1fr; /* Single column layout */
+    }
+    main {
+        /* Optional: Add padding top if mobile toggle overlaps */
+        /* padding-top: 60px; */
+    }
+
+    .chat-area-wrapper {
+        padding: 15px 10px 0; /* Reduced padding */
+    }
+    .main-title {
+        display: none; /* Keep hidden or adjust */
+    }
+    .chatbox {
+        max-width: 100%; /* Full width chatbox */
+        padding: 0 5px 15px 5px;
+        gap: 10px;
+    }
+    .message {
+        max-width: 85%; /* Allow messages to be wider */
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+    .user-input {
+        padding: 10px 10px 15px 10px;
+        max-width: 100%; /* Full width input area */
+        gap: 8px;
+    }
+    #prompt {
+        min-height: 40px;
+        font-size: 0.95rem;
+        padding: 8px 12px;
+        border-radius: 20px;
+    }
+    #submit-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+    .bot-message pre {
+        font-size: 0.85em;
+        padding: 8px;
     }
 }

@@ -1,20 +1,15 @@
-/* static/css/confirmation.css */
-
-/* --- Confirmation Modal --- */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Dimming effect */
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Below notifications, above other content */
+    z-index: 1000;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    padding: 15px;
 }
 
 .modal-overlay.visible {
@@ -25,11 +20,11 @@
 
 .modal-content {
     background-color: #fff;
-    padding: 30px;
+    padding: 25px 30px;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    min-width: 300px; /* Minimum width */
-    max-width: 500px; /* Maximum width */
+    width: 100%;
+    max-width: 450px;
     text-align: center;
     transform: scale(0.9);
     transition: transform 0.3s ease;
@@ -41,14 +36,15 @@
 
 #confirmation-message {
     margin-bottom: 25px;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: #333;
+    line-height: 1.5;
 }
 
 .modal-buttons {
     display: flex;
     justify-content: center;
-    gap: 15px; /* Space between buttons */
+    gap: 15px;
 }
 
 .modal-buttons button {
@@ -57,11 +53,16 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.2s ease;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.modal-buttons button:active {
+    transform: scale(0.97);
 }
 
 .modal-buttons .confirm-btn {
-    background-color: #4caf50; /* Green */
+    background-color: #4caf50;
     color: white;
 }
 .modal-buttons .confirm-btn:hover {
@@ -69,9 +70,22 @@
 }
 
 .modal-buttons .cancel-btn {
-    background-color: #f44336; /* Red */
+    background-color: #f44336;
     color: white;
 }
 .modal-buttons .cancel-btn:hover {
     background-color: #da190b;
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 20px 25px;
+    }
+    #confirmation-message {
+        font-size: 1rem;
+    }
+    .modal-buttons button {
+        padding: 8px 20px;
+        font-size: 0.95rem;
+    }
 }

@@ -6,19 +6,67 @@
         <title>Lỗi Dịch Vụ</title>
         <style>
             body {
-                font-family: sans-serif;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+                    "Helvetica Neue", sans-serif;
                 padding: 20px;
-                background-color: #f8d7da;
-                color: #721c24;
+                background-color: #fef2f2;
+                color: #b91c1c;
+                line-height: 1.6;
+                margin: 0;
             }
             .error-container {
-                border: 1px solid #f5c6cb;
-                padding: 15px;
-                border-radius: 5px;
-                background-color: #f5c6cb;
+                border: 1px solid #fecaca;
+                padding: 20px;
+                border-radius: 8px;
+                background-color: #fee2e2;
+                max-width: 800px;
+                margin: 20px auto;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             }
             h1 {
-                color: #721c24;
+                color: #991b1b;
+                font-size: 1.5rem;
+                margin-top: 0;
+                margin-bottom: 1rem;
+            }
+            p {
+                margin-bottom: 1rem;
+            }
+            pre {
+                background-color: #f9fafb;
+                border: 1px solid #e5e7eb;
+                padding: 15px;
+                border-radius: 4px;
+                overflow-x: auto;
+                color: #1f2937;
+                font-size: 0.9rem;
+            }
+            a {
+                color: #1d4ed8;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            strong {
+                font-weight: 600;
+            }
+            @media (max-width: 600px) {
+                body {
+                    padding: 15px;
+                }
+                .error-container {
+                    padding: 15px;
+                    margin: 15px;
+                }
+                h1 {
+                    font-size: 1.3rem;
+                }
+                pre {
+                    font-size: 0.85rem;
+                    padding: 10px;
+                }
             }
         </style>
     </head>

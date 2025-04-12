@@ -1,25 +1,22 @@
-/**
- * nav.css
- * Styles for the navigation sidebar.
- */
-
 #sidebar {
-    height: 100vh; /* Chiều cao bằng viewport */
-    width: 260px; /* Chiều rộng mặc định */
-    padding: 10px 15px; /* Padding bên trong */
-    background-color: var(--sidebar-color); /* Màu nền */
-    border-right: 1px solid var(--line-color); /* Viền phải */
-    position: sticky; /* Dính khi cuộn */
-    top: 0; /* Dính ở đỉnh */
-    align-self: start; /* Căn chỉnh theo chiều dọc */
+    height: 100dvh;
+    width: 260px;
+    padding: 10px 15px;
+    background-color: var(--sidebar-color);
+    border-right: 1px solid var(--line-color);
+    position: sticky;
+    top: 0;
+    align-self: start;
     display: flex;
-    flex-direction: column; /* Sắp xếp các mục theo chiều dọc */
-    gap: 20px; /* Khoảng cách giữa các phần tử con chính */
-    transition: width 200ms ease-in-out, padding 200ms ease-in-out; /* Hiệu ứng chuyển đổi */
-    overflow-y: auto; /* Cho phép cuộn dọc nếu nội dung quá dài */
-    overflow-x: hidden; /* **FIX: Ngăn chặn thanh cuộn ngang** */
+    flex-direction: column;
+    gap: 20px;
+    transition: width 200ms ease-in-out, padding 200ms ease-in-out,
+        transform 300ms ease-in-out;
+    overflow-y: auto;
+    overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: #595959 var(--sidebar-color);
+    z-index: 1001;
 }
 #sidebar::-webkit-scrollbar {
     width: 5px;
@@ -33,93 +30,97 @@
 }
 
 #sidebar ul {
-    list-style: none; /* Bỏ dấu đầu dòng */
-    padding: 0; /* Reset padding */
-    margin: 0; /* Reset margin */
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* Header của Sidebar */
 .sidebar-header {
     display: flex;
-    align-items: center; /* Căn giữa các mục theo chiều dọc */
-    padding-bottom: 10px; /* Khoảng cách dưới header */
-    /* Không cần width vì flex sẽ xử lý */
-    flex-shrink: 0; /* Ngăn header co lại */
+    align-items: center;
+    padding-bottom: 10px;
+    flex-shrink: 0;
 }
 
 .logo-title {
     color: var(--text-color);
     font-size: large;
     font-weight: bold;
-    flex-grow: 1; /* Cho phép logo chiếm không gian */
-    text-wrap: nowrap; /* Không xuống dòng */
-    overflow: hidden; /* Ẩn khi thu nhỏ */
+    flex-grow: 1;
+    text-wrap: nowrap;
+    overflow: hidden;
     opacity: 1;
     transition: opacity 200ms ease-in-out, width 200ms ease-in-out;
-    margin-right: 10px; /* Khoảng cách với nút toggle */
+    margin-right: 10px;
 }
 
 .logo-title.hidden {
     opacity: 0;
     width: 0;
-    margin-right: 0; /* Bỏ margin khi ẩn */
+    margin-right: 0;
 }
 
-#toggle-navigation {
+#toggle-navigation,
+#mobile-close-btn {
     padding: 7px;
     border-radius: 5px;
     color: var(--text-color);
     background: none;
     border: 1px solid var(--line-color);
     cursor: pointer;
-    flex-shrink: 0; /* Ngăn nút co lại */
-    display: flex; /* Để căn giữa icon bên trong */
+    flex-shrink: 0;
+    display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.2rem;
+}
+#mobile-close-btn {
+    display: none; /* Hidden by default */
+    margin-left: auto; /* Push to the right */
+    border: none; /* No border for close */
 }
 
-#toggle-navigation:hover {
+#toggle-navigation:hover,
+#mobile-close-btn:hover {
     background-color: var(--line-color);
 }
 
-/* Các mục điều hướng chính */
 .navigation {
     display: flex;
     flex-direction: column;
-    gap: 5px; /* Khoảng cách giữa các link */
-    flex-shrink: 0; /* Ngăn co lại */
+    gap: 5px;
+    flex-shrink: 0;
 }
 
 .navigation li a {
     display: flex;
-    gap: 17px; /* Khoảng cách icon và text */
+    gap: 17px;
     text-decoration: none;
     color: var(--text-color);
-    padding: 10px 7px; /* Padding link */
+    padding: 10px 7px;
     border-radius: 5px;
-    align-items: center; /* Căn giữa icon và text */
-    text-wrap: nowrap; /* Không xuống dòng */
+    align-items: center;
+    text-wrap: nowrap;
     font-size: 16px;
-    overflow: hidden; /* Ẩn phần tràn */
+    overflow: hidden;
 }
 .navigation li a span {
-    display: inline; /* Hiện text */
-    transition: opacity 0.2s ease-in-out; /* Hiệu ứng cho text */
-    overflow: hidden; /* Ẩn phần tràn của text */
-    text-overflow: ellipsis; /* Thêm dấu ... nếu tràn */
+    display: inline;
+    transition: opacity 0.2s ease-in-out;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .navigation li a:hover {
     background-color: var(--line-color);
 }
 
-/* Khu vực danh sách chat */
 .chatlist {
-    flex-grow: 1; /* Chiếm không gian còn lại */
-    overflow: hidden; /* Ngăn scrollbar riêng, để submenu xử lý */
+    flex-grow: 1;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 0; /* Quan trọng cho flex-grow và overflow */
+    min-height: 0;
 }
 
 #dropdown-btn {
@@ -135,8 +136,8 @@
     margin-bottom: 5px;
     cursor: pointer;
     color: var(--text-color);
-    flex-shrink: 0; /* Ngăn co lại */
-    overflow: hidden; /* Đảm bảo không tràn */
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
 #dropdown-btn:hover {
@@ -144,54 +145,48 @@
 }
 
 #dropdown-btn span {
-    /* Container cho icon + text */
     display: flex;
     gap: 17px;
     align-items: center;
-    overflow: hidden; /* Ngăn tràn nội dung bên trong */
-    flex-grow: 1; /* Cho phép chiếm không gian */
-    margin-right: 5px; /* Khoảng cách với icon dropdown */
+    overflow: hidden;
+    flex-grow: 1;
+    margin-right: 5px;
 }
 
 #dropdown-btn span a {
     text-decoration: none;
     color: var(--text-color);
     font-size: 16px;
-    text-wrap: nowrap; /* Không xuống dòng */
-    overflow: hidden; /* Ẩn nếu tràn */
-    text-overflow: ellipsis; /* Thêm ... */
-    flex-shrink: 1; /* Cho phép text co lại nếu cần */
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
 }
 
 #dropdown-btn i {
     color: var(--text-color);
     transition: transform 0.2s ease-in-out;
-    flex-shrink: 0; /* Ngăn icon co lại */
+    flex-shrink: 0;
 }
 #dropdown-btn i#dropdown-icon {
-    /* Icon mũi tên */
-    margin-left: auto; /* Đẩy về cuối nếu cần */
+    margin-left: auto;
 }
 
-/* Xoay icon khi mở */
 #dropdown-icon.bxs-chevron-up {
     transform: rotate(180deg);
 }
 
-/* Submenu (danh sách chat cụ thể) */
 .submenu {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    overflow-y: auto; /* Scroll dọc khi cần */
-    overflow-x: hidden; /* Luôn ẩn scroll ngang */
+    overflow-y: auto;
+    overflow-x: hidden;
     transition: max-height 200ms ease-in-out, opacity 200ms ease-in-out,
         visibility 200ms ease-in-out, padding 200ms ease-in-out;
     border-radius: 5px;
     padding: 5px;
-    flex-grow: 1; /* Chiếm không gian còn lại trong chatlist */
-    /* Giới hạn chiều cao động hơn thay vì cố định */
-    /* max-height: calc(100vh - 350px); */ /* Điều chỉnh giá trị này nếu cần */
+    flex-grow: 1;
     scrollbar-width: thin;
     scrollbar-color: #595959 var(--sidebar-color);
 }
@@ -206,7 +201,6 @@
     border-radius: 3px;
 }
 
-/* Trạng thái ẩn của submenu */
 .submenu.hidden {
     max-height: 0px;
     opacity: 0;
@@ -217,12 +211,11 @@
     overflow: hidden;
 }
 
-/* Nút Đăng xuất */
 #logout-form {
     width: 100%;
-    margin-top: auto; /* Đẩy xuống dưới cùng */
-    padding-top: 10px; /* Khoảng cách với phần tử bên trên */
-    flex-shrink: 0; /* Không co lại */
+    margin-top: auto;
+    padding-top: 10px;
+    flex-shrink: 0;
 }
 
 #logout-btn {
@@ -235,17 +228,17 @@
     text-wrap: nowrap;
     display: flex;
     align-items: center;
-    justify-content: center; /* Căn giữa icon và text */
+    justify-content: center;
     gap: 10px;
     font-size: 16px;
     cursor: pointer;
-    overflow: hidden; /* Đảm bảo không tràn */
-    box-sizing: border-box; /* Tính cả padding vào width */
+    overflow: hidden;
+    box-sizing: border-box;
 }
 #logout-btn span {
     display: inline;
     transition: opacity 0.2s ease-in-out, width 0.2s ease-in-out;
-    overflow: hidden; /* Thêm overflow hidden cho span */
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
@@ -253,80 +246,63 @@
     background-color: var(--negative-color-hover);
 }
 
-/* --- Trạng thái Sidebar Đóng --- */
-
 #sidebar.close {
-    width: 60px; /* Chiều rộng khi đóng (tăng nhẹ để có không gian) */
-    padding: 10px 10px; /* Padding đều 2 bên */
-    align-items: center; /* **FIX: Căn giữa tất cả nội dung con** */
+    width: 60px;
+    padding: 10px 10px;
+    align-items: center;
 }
 
-/* **FIX: Căn giữa header khi đóng** */
 #sidebar.close .sidebar-header {
-    justify-content: center; /* Căn giữa nút toggle */
-    width: 100%; /* Đảm bảo header chiếm đủ rộng để căn giữa */
-    padding-bottom: 10px; /* Giữ padding bottom */
+    justify-content: center;
+    width: 100%;
+    padding-bottom: 10px;
 }
 
-/* Ẩn text trong navigation links khi sidebar đóng */
 #sidebar.close .navigation li a span,
 #sidebar.close #dropdown-btn span a,
-#sidebar.close .logo-title /* Đảm bảo logo cũng ẩn */ {
+#sidebar.close .logo-title,
+#sidebar.close #logout-btn span {
     opacity: 0;
     width: 0;
     overflow: hidden;
-    display: none; /* Ẩn hoàn toàn */
+    display: none;
 }
 
-/* Điều chỉnh lại padding/gap cho icon khi sidebar đóng */
 #sidebar.close .navigation li a {
-    justify-content: center; /* Căn giữa icon */
-    padding: 10px; /* Padding đều */
+    justify-content: center;
+    padding: 10px;
     gap: 0;
-    width: auto; /* Để thẻ a co lại theo icon */
+    width: auto;
 }
 
-/* Căn giữa nút dropdown khi đóng */
 #sidebar.close #dropdown-btn {
     justify-content: center;
     padding: 10px;
-    width: auto; /* Co lại theo icon */
+    width: auto;
 }
 #sidebar.close #dropdown-btn span {
     gap: 0;
-    margin-right: 0; /* Bỏ margin */
+    margin-right: 0;
 }
 #sidebar.close #dropdown-btn #dropdown-icon {
-    display: none; /* Ẩn icon dropdown */
+    display: none;
 }
-/* Ẩn submenu hoàn toàn khi sidebar đóng */
 #sidebar.close .submenu {
     display: none;
 }
 
-/* Căn giữa nút logout khi đóng */
 #sidebar.close #logout-form {
-    width: auto; /* Co lại */
+    width: auto;
 }
 #sidebar.close #logout-btn {
-    padding: 10px; /* Padding đều */
-    width: auto; /* Co lại theo icon */
+    padding: 10px;
+    width: auto;
     border-radius: 5px;
-    /* justify-content: center; đã có */
 }
-#sidebar.close #logout-btn span {
-    /* Đã ẩn ở trên */
-    opacity: 0;
-    width: 0;
-    overflow: hidden;
-    display: none;
-}
-
-/* --- CSS cho Edit/Delete Menu trong Submenu --- */
 
 .submenu-content {
     position: relative;
-    padding: 0; /* Bỏ padding ở đây, để chat-list-item xử lý */
+    padding: 0;
     border-radius: 4px;
     transition: background-color 0.1s ease;
 }
@@ -334,7 +310,6 @@
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Style cho item active */
 .submenu-content.active {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -346,11 +321,11 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 6px 8px; /* Padding cho nội dung item */
+    padding: 6px 8px;
     border-radius: 4px;
     min-height: 32px;
-    box-sizing: border-box; /* Đảm bảo padding nằm trong width */
-    overflow: hidden; /* Ngăn nội dung tràn ra ngoài */
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .chat-link {
@@ -363,10 +338,10 @@
     margin-right: 5px;
     font-size: 14px;
     cursor: pointer;
-    display: block; /* Hoặc inline-block */
+    display: block;
 }
 .chat-link:hover {
-    background-color: transparent; /* Bỏ hover nền riêng */
+    background-color: transparent;
 }
 
 .chat-title-text {
@@ -383,11 +358,11 @@
     border-radius: 3px;
     cursor: pointer;
     flex-shrink: 0;
-    margin-left: auto; /* Đẩy nút về cuối */
+    margin-left: auto;
     line-height: 1;
     opacity: 0;
     transition: opacity 0.15s ease;
-    display: flex; /* Để căn icon */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -395,10 +370,9 @@
 .submenu-content.active .chat-settings-btn {
     opacity: 1;
 }
-/* Luôn ẩn khi đang edit */
 .submenu-content.editing .chat-settings-btn {
     opacity: 0 !important;
-    pointer-events: none; /* Vô hiệu hóa tương tác */
+    pointer-events: none;
 }
 
 .chat-settings-btn:hover {
@@ -409,26 +383,23 @@
     vertical-align: middle;
 }
 
-/* ----- Trạng thái Editing ----- */
 .submenu-content.editing {
     background-color: rgba(255, 255, 255, 0.08);
 }
-/* Ẩn link và nút settings khi edit */
 .submenu-content.editing .chat-link,
 .submenu-content.editing .chat-settings-btn {
     display: none;
 }
 
-/* Hiển thị container input/actions khi edit */
 .submenu-content .edit-title-container {
-    display: none; /* Mặc định ẩn */
+    display: none;
     flex-grow: 1;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
 }
 .submenu-content.editing .edit-title-container {
-    display: flex !important; /* Hiện khi có class editing */
+    display: flex !important;
 }
 
 .edit-title-input {
@@ -484,7 +455,6 @@
     cursor: not-allowed;
 }
 
-/* ----- Menu Tùy chọn (Popup) ----- */
 .chat-options-menu {
     position: absolute;
     top: calc(100% + 2px);
@@ -493,20 +463,20 @@
     border: 1px solid #555;
     border-radius: 6px;
     padding: 6px;
-    z-index: 100;
+    z-index: 1100;
     min-width: 130px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
     opacity: 0;
     transform: translateY(-5px);
-    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s 0.15s; /* Delay visibility transition */
-    visibility: hidden; /* Dùng visibility thay display */
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s 0.15s;
+    visibility: hidden;
 }
 
 .chat-options-menu.visible {
     opacity: 1;
     transform: translateY(0);
     visibility: visible;
-    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s 0s; /* Bỏ delay khi hiện */
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s 0s;
 }
 
 .chat-options-menu button {
@@ -540,4 +510,99 @@
 }
 .chat-options-menu .delete-chat-btn i {
     color: var(--negative-color);
+}
+
+#sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 300ms ease-in-out, visibility 0s 300ms;
+    display: none; /* Hidden by default, shown only on mobile */
+}
+#sidebar-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 300ms ease-in-out, visibility 0s 0s;
+}
+
+#mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1002;
+    background-color: rgba(50, 50, 50, 0.8);
+    color: var(--text-color);
+    border: 1px solid var(--line-color);
+    border-radius: 5px;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+#mobile-menu-toggle:hover {
+    background-color: rgba(70, 70, 70, 0.9);
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        border-right: none; /* Remove border when overlaying */
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    }
+    #sidebar.visible {
+        transform: translateX(0);
+    }
+    #sidebar.close {
+        /* Adjust close state for mobile overlay */
+        width: 260px; /* Keep full width when 'closed' but visible */
+        padding: 10px 15px;
+        align-items: initial; /* Reset alignment */
+    }
+    #sidebar.close .sidebar-header {
+        justify-content: space-between; /* Logo left, toggle right */
+        width: auto;
+    }
+    #sidebar.close .navigation li a,
+    #sidebar.close #dropdown-btn,
+    #sidebar.close #logout-btn {
+        justify-content: flex-start; /* Align items left */
+        padding: 10px 7px; /* Restore padding */
+        width: 100%; /* Full width */
+        gap: 17px; /* Restore gap */
+    }
+    #sidebar.close .navigation li a span,
+    #sidebar.close #dropdown-btn span a,
+    #sidebar.close .logo-title,
+    #sidebar.close #logout-btn span {
+        opacity: 1;
+        width: auto;
+        display: inline; /* Ensure text is visible */
+    }
+    #sidebar.close #dropdown-btn #dropdown-icon {
+        display: block; /* Ensure dropdown icon is visible */
+    }
+    #sidebar.close #logout-form {
+        width: 100%;
+    }
+
+    #toggle-navigation {
+        display: none; /* Hide desktop toggle on mobile */
+    }
+    #mobile-close-btn {
+        display: flex; /* Show mobile close button inside sidebar */
+    }
+    #mobile-menu-toggle {
+        display: block; /* Show hamburger toggle */
+    }
+    #sidebar-overlay {
+        display: block; /* Enable overlay for mobile */
+    }
 }
