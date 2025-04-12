@@ -1,31 +1,30 @@
+/* static/css/notification.css */
+
+/* --- Notification System --- */
 #notification-container {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 1050;
-    width: 90%;
-    max-width: 320px;
+    z-index: 1050; /* Ensure it's above most other elements */
+    width: 300px; /* Adjust as needed */
     display: flex;
     flex-direction: column;
     gap: 10px;
-    pointer-events: none;
+    pointer-events: none; /* Allow clicks to pass through container */
 }
 
 .notification {
-    position: relative;
+    position: relative; /* For positioning the close button */
     background-color: #333;
     color: #fff;
-    padding: 12px 35px 12px 15px;
+    padding: 15px 40px 15px 15px; /* Make space for close button */
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     opacity: 0;
-    transform: translateX(110%);
+    transform: translateX(100%);
     transition: opacity 0.5s ease, transform 0.5s ease;
     font-size: 0.9rem;
-    line-height: 1.4;
-    pointer-events: auto;
-    width: 100%;
-    box-sizing: border-box;
+    pointer-events: auto; /* Re-enable pointer events for notifications */
 }
 
 .notification.show {
@@ -34,25 +33,25 @@
 }
 
 .notification.success {
-    background-color: #4caf50;
+    background-color: #4caf50; /* Green */
 }
 
 .notification.error {
-    background-color: #f44336;
+    background-color: #f44336; /* Red */
 }
 
 .notification.info {
-    background-color: #2196f3;
+    background-color: #2196f3; /* Blue */
 }
 
 .notification-close-btn {
     position: absolute;
-    top: 4px;
-    right: 4px;
+    top: 5px;
+    right: 5px;
     background: none;
     border: none;
-    color: inherit;
-    font-size: 1.1rem;
+    color: inherit; /* Use the notification's text color */
+    font-size: 1.2rem;
     cursor: pointer;
     padding: 5px;
     line-height: 1;
@@ -61,23 +60,4 @@
 
 .notification-close-btn:hover {
     opacity: 1;
-}
-
-@media (max-width: 480px) {
-    #notification-container {
-        top: 15px;
-        right: 15px;
-        width: calc(100% - 30px);
-        max-width: none;
-    }
-    .notification {
-        padding: 10px 30px 10px 12px;
-        font-size: 0.85rem;
-    }
-    .notification-close-btn {
-        top: 2px;
-        right: 2px;
-        font-size: 1rem;
-        padding: 4px;
-    }
 }

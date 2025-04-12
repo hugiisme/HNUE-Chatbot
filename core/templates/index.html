@@ -15,23 +15,14 @@
         {{ chat_history|json_script:"chat-history-data" }}
     </head>
     <body>
-        <button id="mobile-menu-toggle" aria-label="Toggle navigation">
-            <i class="bx bx-menu"></i>
-        </button>
         <nav id="sidebar">
             <div class="sidebar-header">
                 <span class="logo-title">Gemini Chat</span>
-                <button
-                    id="toggle-navigation"
-                    aria-label="Toggle sidebar width"
-                >
+                <button id="toggle-navigation">
                     <i
                         id="toggle-navigation-icon"
                         class="bx bxs-chevrons-left"
                     ></i>
-                </button>
-                <button id="mobile-close-btn" aria-label="Close navigation">
-                    <i class="bx bx-x"></i>
                 </button>
             </div>
             <ul class="navigation">
@@ -46,12 +37,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" title="Cài đặt"
+                    <a href="#"
                         ><i class="bx bx-cog"></i><span>Cài đặt</span></a
                     >
                 </li>
                 <li>
-                    <a href="#" title="Tài khoản"
+                    <a href="#"
                         ><i class="bx bx-user"></i><span>Tài khoản</span></a
                     >
                 </li>
@@ -130,13 +121,12 @@
             </div>
             <form action="{% url 'logout' %}" id="logout-form" method="post">
                 {% csrf_token %}
-                <button type="submit" id="logout-btn" title="Đăng xuất">
+                <button type="submit" id="logout-btn">
                     <i class="bx bx-log-out"></i>
                     <span>Đăng xuất</span>
                 </button>
             </form>
         </nav>
-        <div id="sidebar-overlay"></div>
         <main>
             <div class="chat-area-wrapper">
                 <h1 class="main-title">Gemini Chat</h1>
