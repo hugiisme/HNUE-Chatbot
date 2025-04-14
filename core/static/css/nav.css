@@ -4,15 +4,16 @@
  */
 
 #sidebar {
+    display: none;
     height: 100vh; /* Chiều cao bằng viewport */
-    width: 260px; /* Chiều rộng mặc định */
+    width: 260px;
     padding: 10px 15px; /* Padding bên trong */
     background-color: var(--sidebar-color); /* Màu nền */
     border-right: 1px solid var(--line-color); /* Viền phải */
     position: sticky; /* Dính khi cuộn */
     top: 0; /* Dính ở đỉnh */
     align-self: start; /* Căn chỉnh theo chiều dọc */
-    display: flex;
+    /* display: flex; */
     flex-direction: column; /* Sắp xếp các mục theo chiều dọc */
     gap: 20px; /* Khoảng cách giữa các phần tử con chính */
     transition: width 200ms ease-in-out, padding 200ms ease-in-out; /* Hiệu ứng chuyển đổi */

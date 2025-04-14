@@ -26,7 +26,7 @@ html {
 body {
     min-height: 100dvh;
     display: grid;
-    grid-template-columns: auto 1fr; /* Giữ nguyên layout grid cho body */
+    grid-template-columns: auto; /* auto 1fr */
     background-color: var(--main-color); /* Có thể đặt BG ở body */
     color: var(--text-color);
     overflow: hidden; /* Ngăn body scroll */
